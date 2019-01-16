@@ -11,6 +11,27 @@ NOTE: If you strongly prefer to work locally on your own computer, you can total
 
 import random
 
+# store and load functions adapted from https://stackoverflow.com/a/53684733/10221777
+
+def store_highscore_in_file(dictionary, fn = "./highscore.txt"):
+    """Store the dict into a file"""
+    with open(fn,"w") as f:
+        for name, guesses in dictionary.items():
+            f.write(f"{name}:{guesses}\n")
+            
+
+def load_highscore_from_file(fn = "./highscore.txt"):
+    """Retrieve dict from file"""
+    hs = {}
+    try:
+        with open(fn,"r") as f:
+            for line in f:
+                name,_,guesses = line.partition(":")
+                if name and guesses:
+                    hs[name]=int(guesses)
+    except FileNotFoundError:
+        return {}
+    return hs
 
 def start_game():
     """Psuedo-code Hints
@@ -30,26 +51,7 @@ def start_game():
     ( You can add more features/enhancements if you'd like to. )
     """
     # write your code inside this function.
-    # store and load functions adapted from https://stackoverflow.com/a/53684733/10221777
-    def store_highscore_in_file(dictionary, fn = "./highscore.txt"):
-        """Store the dict into a file, only store top_n highest values."""
-        with open(fn,"w") as f:
-            for name, guesses in dictionary.items():
-                f.write(f"{name}:{guesses}\n")
-                
-
-    def load_highscore_from_file(fn = "./highscore.txt"):
-        """Retrieve dict from file"""
-        hs = {}
-        try:
-            with open(fn,"r") as f:
-                for line in f:
-                    name,_,guesses = line.partition(":")
-                    if name and guesses:
-                        hs[name]=int(guesses)
-        except FileNotFoundError:
-            return {}
-        return hs
+    
 
     banner = "="*30
     guessing = True
@@ -60,6 +62,9 @@ def start_game():
     print("{}\nWelcome to the Python guessing game!\n{}\n".format(banner, banner))
     if highscore:
         print("The high score is {} tries.\n".format(highscore["player"]))
+    else:
+        store_highscore_in_file({"player": 20})
+        highscore = load_highscore_from_file()
     
 
     while guessing:
